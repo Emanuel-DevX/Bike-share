@@ -23,4 +23,13 @@ data_2019 <- rename(data_2019,
                   end_station_id = to_station_id,
                   member_casual = usertype)
 
+str(data_2019)  
+str(data_2020)
+
+data_2019 <- mutate(data_2019, 
+                  ride_id = as.character(ride_id), 
+                  rideable_type = as.character(rideable_type))
+
+
+
 
