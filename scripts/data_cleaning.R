@@ -35,7 +35,14 @@ all_trips <- bind_rows(data_2019, data_2020)
 all_trips <- all_trips %>%    
   select(-c(start_lat, start_lng, end_lat, end_lng, birthyear, gender, "tripduration"))
 
+str(all_trips)
+View (all_trips)
 
-
+colnames(all_trips)  # List of column names
+nrow(all_trips)      # Count the number of rows
+dim(all_trips)       # Dimensions of the dataset (rows and columns)
+head(all_trips)      # View the first 6 rows
+str(all_trips)       # Check column data types
+summary(all_trips)   # Statistical summary of numeric columns
 
 
