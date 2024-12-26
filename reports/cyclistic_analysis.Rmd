@@ -1,30 +1,149 @@
 ---
-title: "Cyclistic Analysis"
+title: "Cyclistic Bike Share Analysis"
 author: "Emanuel Fisha Molla"
 date: "`r Sys.Date()`"
 output: html_document
+ 
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Introduction
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+In this analysis, I explore the bike-sharing dataset to identify key trends and insights. This report is based on the data collected from Cyclistic, a bike-sharing program, which will help us understand how riders use the service.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## Problem Statement and Objective
 
-```{r cars}
-summary(cars)
+The primary objective of this analysis is to determine how different types of users (e.g., casual vs. annual members) utilize the bike-sharing service. Specifically, we aim to answer the following questions:  
+
+- What is the distribution of rides by type of user?  
+- How do ride durations differ between casual and annual members?  
+- What time patterns can be observed in the bike usage?  
+
+## Data Frame Overview
+
+The dataset contains information about each ride, including the start and end times, user type, and bike usage details.   
+```{r include=FALSE}
+# Load libraries
+library(tidyverse)
+library(lubridate)
 ```
 
-## Including Plots
+```{r include=FALSE}
+# Load the data
+data <- read.csv("../data/processed/all_trips_v2.csv")
 
-You can also embed plots, for example:
+# Create a data frame with column names and data types, ensuring no duplication
+column_info <- data.frame (Data_Type = sapply(data, function(x) class(x)[1]))
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+# Display the table
+table_info<-knitr::kable(column_info, caption = "Column Names and Data Types")
+
+
+```
+```{r}
+table_info
+```
+  
+## Exploratory Data Analysis (EDA)  
+Now, let's explore the dataset to understand the key features and patterns.  
+
+#### User Type Distribution
+We'll start by analyzing the distribution of users.
+```{r include=FALSE}
+#The data is cleaned and processed prior  to report.
+# Count the number of rides for each user type
+user_type_count <- data %>%
+  group_by(User_type = member_casual) %>%
+  summarise(num_rides = n())
+user_type_count<- knitr::kable(user_type_count)
+```
+```{r}
+user_type_count
+```
+#### Ride Duration Analysis  
+Next, we analyze the ride durations for each user type.  
+
+```{r include=FALSE}
+
+# Summary of ride durations by user type
+duration_summary<- data %>%
+  group_by(User_type=member_casual) %>%
+  summarise(Average_ride_length = mean(ride_length))
+  #aggregate(data$ride_length ~ data$member_casual, FUN = mean)    # Mean
+
+duration_summary<- knitr::kable(duration_summary)
+```
+```{r}
+duration_summary
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Data Visualizations
+We now visualize the key findings using graphs.  
+
+#### Distribution of Rides by User Type   
+
+```{r include=FALSE, warning=FALSE}
+# Plot the number of rides for each user type for each day of the week
+num_rides_viz<- data %>%   
+  mutate(weekday = wday(started_at, label = TRUE)) %>%   
+  group_by(member_casual, weekday) %>%   
+  summarise(number_of_rides = n(), average_duration = mean(ride_length)) %>%   
+  arrange(member_casual, weekday) %>%   
+  ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) +  
+  geom_col(position = "dodge", width = 0.7) + # Adjusted bar width
+  scale_fill_manual(values = c("dodgerblue3", "orange2")) +  # Custom colors
+  labs(title = "Number of Rides by Rider Type and Weekday", 
+       x = "Weekday", y = "Number of Rides", 
+       fill = "Rider Type") +
+  theme_minimal() +  # Clean theme
+  theme(axis.text.x = element_text(angle = 0, hjust = 1.2)) 
+```
+```{r}
+num_rides_viz
+```
+
+#### Ride Duration Comparison      
+```{r, include=FALSE, warning=FALSE}
+ride_dur_viz <- data %>%   
+  mutate(weekday = wday(started_at, label = TRUE)) %>%   
+  group_by(member_casual, weekday) %>%   
+  summarise(number_of_rides = n(), average_duration = mean(ride_length)) %>%   
+  arrange(member_casual, weekday) %>%   
+  ggplot(aes(x = weekday, y = average_duration, fill = member_casual)) +  
+  geom_col(position = "dodge", width = 0.7) +  # Adjusted bar width
+  scale_fill_manual(values = c("dodgerblue3", "orange2")) +  # Custom colors
+  labs(title = "Average Ride Duration by Rider Type and Weekday", 
+       x = "Weekday", y = "Average Duration (minutes)", 
+       fill = "Rider Type") +
+  theme_minimal() +  # Clean theme
+  theme(axis.text.x = element_text(angle = 0, hjust = 1.2))
+```
+
+```{r}
+ride_dur_viz
+```
+  
+## Conclusion and Recommendations
+In this analysis, we observed significant differences between annual members and casual riders:  
+
+* Annual members have a higher number of rides, but their rides tend to be shorter on average.  
+* Casual riders tend to take longer rides but are less frequent in their usage.  
+
+### Business Recommendations:  
+1. Targeting Casual Riders for Conversion: Casual riders could greatly benefit from an annual membership. Although they tend to take longer trips, they are not using the service as frequently. By converting them to annual members, they would enjoy unlimited rides at no additional cost per ride, which might encourage them to use the service more often, especially for longer trips.  
+
+2. Using Digital Media: Digital campaigns, including social media ads and email promotions, could highlight these benefits, especially targeting those who already show interest in regular bike usage. Promoting the convenience and cost-saving aspects of the annual membership could appeal to casual riders.  
+
+3. Maximizing Member Conversion: By offering promotions, discounts, or trial memberships, Cyclistic can encourage casual riders to become long-term members.  
+
+<!-- Footer with extra space -->
+<div style="margin-top: 120px; text-align: center;">
+  <footer>
+      <p>&copy; 2024 Cyclistic Bike Share. All Rights Reserved.</p>
+      <p>Full project available on <a href="https://github.com/Emanuel-DevX/Bike-share">GitHub</a></p>
+  </footer>
+</div>
+  
