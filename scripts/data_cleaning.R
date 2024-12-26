@@ -60,4 +60,7 @@ all_trips$day <- format(as.Date(all_trips$date), "%d")    # Extract day
 all_trips$year <- format(as.Date(all_trips$date), "%Y")   # Extract year
 all_trips$day_of_week <- format(as.Date(all_trips$date), "%A")  # Day name
 
+all_trips$ride_length <- difftime(all_trips$ended_at, all_trips$started_at)
+all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
+
 
