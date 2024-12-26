@@ -45,4 +45,12 @@ head(all_trips)      # View the first 6 rows
 str(all_trips)       # Check column data types
 summary(all_trips)   # Statistical summary of numeric columns
 
+# Reassign inconsistent values
+all_trips <- all_trips %>%
+  mutate(member_casual = recode(member_casual,
+                                "Subscriber" = "member",
+                                "Customer" = "casual"))
+
+# Verify changes
+table(all_trips$member_casual)
 
