@@ -63,4 +63,10 @@ all_trips$day_of_week <- format(as.Date(all_trips$date), "%A")  # Day name
 all_trips$ride_length <- difftime(all_trips$ended_at, all_trips$started_at)
 all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
 
+#Filter out rows with invalid or irrelevant data:
+# Rides with start_station_name as "HQ QR" (used for quality checks).
+#Rides with negative ride_length
+all_trips_v2 <- all_trips[!(all_trips$start_station_name == "HQ QR" | 
+                              all_trips$ride_length < 0), ]
+
 
