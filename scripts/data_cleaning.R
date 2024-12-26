@@ -54,3 +54,10 @@ all_trips <- all_trips %>%
 # Verify changes
 table(all_trips$member_casual)
 
+all_trips$date <- as.Date(all_trips$started_at)  # Extract date
+all_trips$month <- format(as.Date(all_trips$date), "%m")  # Extract month
+all_trips$day <- format(as.Date(all_trips$date), "%d")    # Extract day
+all_trips$year <- format(as.Date(all_trips$date), "%Y")   # Extract year
+all_trips$day_of_week <- format(as.Date(all_trips$date), "%A")  # Day name
+
+
