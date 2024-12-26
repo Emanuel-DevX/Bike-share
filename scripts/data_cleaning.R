@@ -29,8 +29,12 @@ str(data_2020)
 data_2019 <- mutate(data_2019, 
                   ride_id = as.character(ride_id), 
                   rideable_type = as.character(rideable_type))
-#combine the datasets
+#combine the data sets
 all_trips <- bind_rows(data_2019, data_2020)
+
+all_trips <- all_trips %>%    
+  select(-c(start_lat, start_lng, end_lat, end_lng, birthyear, gender, "tripduration"))
+
 
 
 
