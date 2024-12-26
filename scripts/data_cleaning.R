@@ -69,4 +69,8 @@ all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
 all_trips_v2 <- all_trips[!(all_trips$start_station_name == "HQ QR" | 
                               all_trips$ride_length < 0), ]
 
+summary(all_trips_v2)  # Statistical summary
+str(all_trips_v2)      # Structure of the dataset
+nrow(all_trips_v2)     # Number of rows after cleaning
+
 
